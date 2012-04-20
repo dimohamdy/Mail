@@ -1,6 +1,134 @@
-*.class
+//Here is the code for the client side of the application:
 
-# Package Files #
-*.jar
-*.war
-*.ear
+import java. io. * ;
+import java. net. *;
+import java.util.Scanner;
+import org.apache.commons.codec.binary.Base64;
+public class Mail
+ {
+  
+public static void main(String argv[])
+{
+	
+	try {
+		
+		String RData;
+	
+
+		 Socket sock = new Socket("smtp.gmail.com", 25);
+	
+      
+      
+ //=======================================================
+      
+      
+ DataOutputStream toServer;
+ DataInputStream fromServer;
+//========================================================
+fromServer = new DataInputStream(sock.getInputStream());
+toServer =new DataOutputStream(sock.getOutputStream());
+		       // Create an output stream to send data to the server
+
+toServer.writeUTF("helo google");
+RData=fromServer.readUTF();
+System.out.println(RData);
+//============================================
+toServer.writeUTF("ehlo google");
+RData=fromServer.readUTF();
+System.out.println(RData);
+//===================================AuTHORIZATION==========================
+toServer.writeUTF("AUTH LOGIN");
+RData=fromServer.readUTF();
+System.out.println(RData);
+//==================================LOGIN===================================
+Scanner scanner = new Scanner(System.in);
+
+System.out.println("please login you user name and password ");
+
+System.out.println("user name");
+String user=scanner.next();
+System.out.println("password please");
+String pwd=scanner.next();
+
+String UserEncoded = new String(Base64.encodeBase64(user.getBytes()));
+toServer.writeUTF(UserEncoded);
+RData=fromServer.readUTF();
+System.out.println(RData);
+String PwdEncoded = new String(Base64.encodeBase64(pwd.getBytes()));
+toServer.writeUTF(PwdEncoded);
+RData=fromServer.readUTF();
+System.out.println(RData);
+
+//====================================Sender & RECEIVER========================
+System.out.println("Enter the Sender Email");
+String From= scanner.next();
+String temp="MAIL FROM:<"+From+">";
+toServer.writeUTF(temp);
+RData=fromServer.readUTF();
+System.out.println(RData);
+//------------------------
+System.out.println("Enter the Reciver Email");
+String TO= scanner.next();
+ temp="RCPT TO:<"+TO+">";
+toServer.writeUTF(temp);
+RData=fromServer.readUTF();
+System.out.println(RData);
+
+
+
+//====================================THE MESSAGE WILL SEND=====================
+toServer.writeUTF("DATA");
+RData=fromServer.readUTF();
+System.out.println(RData);
+
+System.out.println("Enter your message");
+String message= scanner.next();
+
+System.out.println("Enter YOUR name");
+String yournName= scanner.next();
+
+System.out.println("Enter RECEIVER name");
+String reciverName= scanner.next();
+
+
+String newMS=String.format("From: %s <%s>\nTo: %s <%s>\nSubject:%s",yournName,From,reciverName,TO,message);
+toServer.writeUTF(newMS);
+RData=fromServer.readUTF();
+System.out.println(RData);
+//==================================END OF MESSAGE================================
+
+
+toServer.writeUTF(".");
+RData=fromServer.readUTF();
+System.out.println(RData);
+
+//==================================COLSE THE CONNECTION========================
+toServer.writeUTF("QUIT");
+RData=fromServer.readUTF();
+System.out.println(RData);
+
+sock.close();
+      
+      }
+catch (IOException ex) 
+
+{
+	ex.toString();
+}
+
+
+}
+
+ }
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
